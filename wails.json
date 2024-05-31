@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "wuthering-waves-dps-meter",
+  "outputfilename": "wuthering-waves-dps-meter",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Aaron Lin",
+    "email": "aaronlin256@gmail.com"
+  }
+}
