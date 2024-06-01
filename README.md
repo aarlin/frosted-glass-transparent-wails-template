@@ -27,15 +27,6 @@ cd frontend
 npm install
 ```
 
-### Installing Components
-To install components, use shadcn's CLI tool to install
-
-More info here: https://ui.shadcn.com/docs/cli#add
-
-Example:
-```console
-npx shadcn-ui@latest add [component]
-```
 
 ## Live Development
 

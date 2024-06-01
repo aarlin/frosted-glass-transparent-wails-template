@@ -2,10 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
-      "name": "Development server",
+      "name": "Wails: Debug myproject",
+      "type": "go",
       "request": "launch",
-      "type": "node-terminal"
+      "mode": "exec",
+      "program": "${workspaceFolder}/build/bin/myproject.exe",
+      "preLaunchTask": "build",
+      "cwd": "${workspaceFolder}",
+      "env": {}
     }
   ]
 }

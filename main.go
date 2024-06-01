@@ -32,7 +32,7 @@ func main() {
 		MaxWidth:          1280,
 		MaxHeight:         800,
     AlwaysOnTop:       true,
-		DisableResize:     false,
+		DisableResize:     true,
 		Fullscreen:        false,
 		Frameless:         false,
 		StartHidden:       false,
@@ -55,7 +55,7 @@ func main() {
 		// Windows platform specific options
 		Windows: &windows.Options{
 			WebviewIsTransparent: true,
-			WindowIsTranslucent:  false,
+			WindowIsTranslucent:  true,
 			DisableWindowIcon:    false,
 			// DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath: "",
