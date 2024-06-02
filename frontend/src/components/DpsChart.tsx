@@ -1,9 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { EventsOn } from '@wailsjs/runtime/runtime';
+import { Button } from './button';
+import { isEmpty } from '@/lib/utils';
+
+window.startDpsTracker = () => {
+  // noinspection JSIgnoredPromiseFromCall
+  window.go.main.App.StartDpsTracker();
+}
 
 
 const DpsChart = () => {
   // const [entities, setEntities] = useState({});
+  const [logs, setLogs] = useState<string[]>([]);
 
   useEffect(() => {
     // Set up the Wails event listener
@@ -11,7 +19,10 @@ const DpsChart = () => {
     //   setEntities(data);
     // });
 
-    EventsOn("rcv:entities", (entities: any) => console.log(entities))
+    EventsOn("rcv:entities", (entities: any) => {
+      if (!isEmpty(entities))
+      setLogs(entities);
+    })
 
     // Cleanup function to remove the event listener
     return () => {
@@ -23,7 +34,11 @@ const DpsChart = () => {
     <div className="App">
       <header className="App-header">
         <h1>DPS Calculator</h1>
+        <Button onClick={window.startDpsTracker}>Start Tracking</Button>
         <div id="dpsContainer">
+          {
+            logs.length > 0 && logs.map((log) => <div key={log}>{log}</div>)
+          }
           {/* <h2>10s DPS:</h2>
           {Object.keys(entities).map((entityId) => (
             entities[entityId].dps10s !== 0 && (
