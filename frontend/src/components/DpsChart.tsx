@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import './App.css';
+import { EventsOn } from '@wailsjs/runtime/runtime';
+
 
 const DpsChart = () => {
   // const [entities, setEntities] = useState({});
@@ -9,6 +10,8 @@ const DpsChart = () => {
     // window.backend.EventsOn('updateDPS', (data) => {
     //   setEntities(data);
     // });
+
+    EventsOn("rcv:entities", (entities: any) => console.log(entities))
 
     // Cleanup function to remove the event listener
     return () => {

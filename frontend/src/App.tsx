@@ -1,5 +1,6 @@
 import { Button } from "@/components/button"
 import React from "react"
+import DpsChart from "@/components/DpsChart"
 
 function App() {
   const [count, setCount] = React.useState(0)
@@ -9,6 +10,7 @@ function App() {
       <div className="text-blue-900 text-2xl font-bold flex flex-col items-center space-y-4">
         <h1>Vite + React + TS + Tailwind + shadcn/ui</h1>
         <Button onClick={() => setCount(count + 1)}>Count up ({count})</Button>
+        <DpsChart/>
       </div>
     </div>
   )

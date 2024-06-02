@@ -8,12 +8,13 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
-  entities map[string]*Entity
+  	entities map[string]*Entity
 }
 
 // Entity struct to hold entity data
@@ -135,6 +136,8 @@ func parseTimestamp(line string) (time.Time, error) {
 func (a *App) updateUI() {
 	// This function should send the updated DPS values to the frontend for display
 	// Use Wails binding to call a frontend method
+	runtime.EventsEmit(a.ctx, "rcv:entities", a.entities)
+
 }
 
 // domReady is called after front-end resources have been loaded

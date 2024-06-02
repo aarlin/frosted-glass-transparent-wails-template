@@ -21,10 +21,10 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Path */
-    "rootDir": "src",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"],
+      "@wailsjs/*": ["wailsjs/*"]
     }
   },
   "include": ["src"],
