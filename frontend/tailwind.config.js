@@ -20,7 +20,7 @@ module.exports = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: 'rgba(255, 255, 255, 0.3)', // Translucent white background
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -70,6 +70,18 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backdropBlur: {
+        'none': 'none',
+        'sm': '4px',
+        'md': '10px', // Medium blur
+        'lg': '15px',
+        'xl': '20px',
+      },
+    },
+  },
+  variants: {
+    extend: {
+      backdropBlur: ['responsive'],
     },
   },
   plugins: [require("tailwindcss-animate")],

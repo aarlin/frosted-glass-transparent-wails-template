@@ -8,9 +8,12 @@ import (
 	"regexp"
 	"strconv"
 	"time"
-  "sync"
+    "log"
+    "sync"
+    "syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+    "github.com/lxn/win"
 )
 
 // App struct
@@ -18,7 +21,7 @@ type App struct {
 	ctx context.Context
   	entities map[string]*Entity
     logLines int
-	  mu       sync.Mutex
+	mu       sync.Mutex
 }
 
 // Entity struct to hold entity data
@@ -35,14 +38,16 @@ type Entity struct {
 func NewApp() *App {
   return &App{
 		entities: make(map[string]*Entity),
-    logLines: 0,
+        logLines: 0,
 	}
 }
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	// Perform your setup here
-	a.ctx = ctx
+    hwnd := win.FindWindow(nil, syscall.StringToUTF16Ptr("wuthering-waves-dps-meter"))
+    win.SetWindowLong(hwnd, win.GWL_EXSTYLE, win.GetWindowLong(hwnd, win.GWL_EXSTYLE)|win.WS_EX_LAYERED)
+
+    a.ctx = ctx
 }
 
 func (a *App) LogLine() {
@@ -100,7 +105,7 @@ func (a *App) startLogReader() {
 
 func (a *App) parseLine(line string, currentTime time.Time) {
 	// Regex patterns
-  a.LogLine()
+    a.LogLine()
 
 	reLifeValue := regexp.MustCompile(`LifeValue: (\d+)`)
 	reDeadValue := regexp.MustCompile(`CharacterAiComponent\.SetEnable`)
@@ -114,20 +119,21 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 	}
 
 	// Extract and process LifeValue
-  if reLifeValue.MatchString(line) || reDeadValue.MatchString(line) {
-    var pastHP float64
-    if reLifeValue.MatchString(line) {
-        lifeValueStr := reLifeValue.FindStringSubmatch(line)[1]
-        pastHP, _ = strconv.ParseFloat(lifeValueStr, 64)
-    } else {
-        pastHP = 0
+    if reLifeValue.MatchString(line) || reDeadValue.MatchString(line) {
+        log.Println(line)
+        var pastHP float64
+        if reLifeValue.MatchString(line) {
+            lifeValueStr := reLifeValue.FindStringSubmatch(line)[1]
+            pastHP, _ = strconv.ParseFloat(lifeValueStr, 64)
+        } else {
+            pastHP = 0
+        }
+
+        entityID := reStartCombatEntityID.FindStringSubmatch(line)[1]
+        entityName := reStartCombatEntityID.FindStringSubmatch(line)[2]
+
+        a.modifyEntity(entityID, entityName, pastHP, currentTime, logTimestamp)
     }
-
-    entityID := reStartCombatEntityID.FindStringSubmatch(line)[1]
-    entityName := reStartCombatEntityID.FindStringSubmatch(line)[2]
-
-    a.modifyEntity(entityID, entityName, pastHP, currentTime, logTimestamp)
-   }
 
    a.updateUI()
 }

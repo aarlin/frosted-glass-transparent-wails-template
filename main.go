@@ -31,13 +31,13 @@ func main() {
 		MinHeight:         400,
 		MaxWidth:          600,
 		MaxHeight:         400,
-    AlwaysOnTop:       true,
+        AlwaysOnTop:       true,
 		DisableResize:     true,
 		Fullscreen:        false,
 		Frameless:         false,
 		StartHidden:       false,
 		HideWindowOnClose: false,
-		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 255},
+		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 0},
 		AssetServer:       &assetserver.Options{
 			Assets: assets,
 		},
@@ -54,8 +54,8 @@ func main() {
 		},
 		// Windows platform specific options
 		Windows: &windows.Options{
-			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
+			WebviewIsTransparent: false,
+			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
 			// DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath: "",

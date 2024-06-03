@@ -15,11 +15,6 @@ const DpsChart = () => {
   const [logLines, setLogLines] = useState<number>(0);
 
   useEffect(() => {
-    // Set up the Wails event listener
-    // window.backend.EventsOn('updateDPS', (data) => {
-    //   setEntities(data);
-    // });
-
     EventsOn("rcv:entities", (entities: any) => {
       if (!isEmpty(entities))
       setLogs(entities);
@@ -37,9 +32,12 @@ const DpsChart = () => {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header flex flex-col justify-center items-center">
         <h1>DPS Calculator</h1>
-        <Button onClick={window.startDpsTracker}>Start Tracking</Button>
+        <div className="space-x-3">
+          <Button onClick={window.startDpsTracker}>Start Tracking</Button>
+          <Button onClick={window.startDpsTracker}>Stop Tracking</Button>
+        </div>
         <div id="dpsContainer">
           {logLines}
           {
