@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Wails: Debug myproject",
+      "name": "Wails: Debug wuthering-waves-dps-meter",
       "type": "go",
       "request": "launch",
       "mode": "exec",
-      "program": "${workspaceFolder}/build/bin/myproject.exe",
+      "program": "${workspaceFolder}/build/bin/wuthering-waves-dps-meter.exe",
       "preLaunchTask": "build",
       "cwd": "${workspaceFolder}",
       "env": {}

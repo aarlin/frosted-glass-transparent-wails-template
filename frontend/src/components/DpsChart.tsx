@@ -12,6 +12,7 @@ window.startDpsTracker = () => {
 const DpsChart = () => {
   // const [entities, setEntities] = useState({});
   const [logs, setLogs] = useState<string[]>([]);
+  const [logLines, setLogLines] = useState<number>(0);
 
   useEffect(() => {
     // Set up the Wails event listener
@@ -22,6 +23,10 @@ const DpsChart = () => {
     EventsOn("rcv:entities", (entities: any) => {
       if (!isEmpty(entities))
       setLogs(entities);
+    })
+
+    EventsOn("rcv:logLines", (logLines: number) => {
+      setLogLines(logLines);
     })
 
     // Cleanup function to remove the event listener
@@ -36,6 +41,7 @@ const DpsChart = () => {
         <h1>DPS Calculator</h1>
         <Button onClick={window.startDpsTracker}>Start Tracking</Button>
         <div id="dpsContainer">
+          {logLines}
           {
             logs.length > 0 && logs.map((log) => <div key={log}>{log}</div>)
           }

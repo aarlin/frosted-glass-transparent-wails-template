@@ -2,6 +2,34 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "npm install",
+      "type": "npm",
+      "script": "install",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "npm run build",
+      "type": "npm",
+      "script": "build",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "build",
       "type": "shell",
       "options": {
@@ -15,8 +43,9 @@
         "-gcflags",
         "all=-N -l",
         "-o",
-        "build/bin/myproject.exe"
-      ]
+        "build/bin/wuthering-waves-dps-meter.exe"
+      ],
+      "dependsOn": ["npm install", "npm run build"]
     }
   ]
 }

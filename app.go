@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+  "sync"
+
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -15,6 +17,8 @@ import (
 type App struct {
 	ctx context.Context
   	entities map[string]*Entity
+    logLines int
+	  mu       sync.Mutex
 }
 
 // Entity struct to hold entity data
@@ -31,6 +35,7 @@ type Entity struct {
 func NewApp() *App {
   return &App{
 		entities: make(map[string]*Entity),
+    logLines: 0,
 	}
 }
 
@@ -38,6 +43,21 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
+}
+
+func (a *App) LogLine() {
+    a.mu.Lock()
+    defer a.mu.Unlock()
+    a.logLines++
+}
+
+func (a *App) GetLogLineCount() int {
+    a.mu.Lock()
+    defer a.mu.Unlock()
+    return a.logLines
+}
+
+func (a *App) StartDpsTracker() {
   go a.startLogReader()
 }
 
@@ -80,47 +100,59 @@ func (a *App) startLogReader() {
 
 func (a *App) parseLine(line string, currentTime time.Time) {
 	// Regex patterns
+  a.LogLine()
+
 	reLifeValue := regexp.MustCompile(`LifeValue: (\d+)`)
-	reEntityID := regexp.MustCompile(`\[EntityId:(\d+):Monster:BP_([^_]*)`)
+	reDeadValue := regexp.MustCompile(`CharacterAiComponent\.SetEnable`)
+	reStartCombatEntityID := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Monster:BP_([^_]*)`)
+
 
 	// Parse timestamp
-	time, err := parseTimestamp(line)
+	logTimestamp, err := parseTimestamp(line)
 	if err != nil {
 		return
 	}
 
 	// Extract and process LifeValue
-	if reLifeValue.MatchString(line) {
-		lifeValueStr := reLifeValue.FindStringSubmatch(line)[1]
-		pastHP, _ := strconv.ParseFloat(lifeValueStr, 64)
+  if reLifeValue.MatchString(line) || reDeadValue.MatchString(line) {
+    var pastHP float64
+    if reLifeValue.MatchString(line) {
+        lifeValueStr := reLifeValue.FindStringSubmatch(line)[1]
+        pastHP, _ = strconv.ParseFloat(lifeValueStr, 64)
+    } else {
+        pastHP = 0
+    }
 
-		entityID := reEntityID.FindStringSubmatch(line)[1]
-		entityName := reEntityID.FindStringSubmatch(line)[2]
+    entityID := reStartCombatEntityID.FindStringSubmatch(line)[1]
+    entityName := reStartCombatEntityID.FindStringSubmatch(line)[2]
 
-		if _, exists := a.entities[entityID]; !exists {
-			a.entities[entityID] = &Entity{
-				HP:             pastHP,
-				Name:           entityName,
-				LastCombatTime: time,
-			}
-		}
+    a.modifyEntity(entityID, entityName, pastHP, currentTime, logTimestamp)
+   }
 
-		entity := a.entities[entityID]
-		if (currentTime.Sub(time).Seconds() < 10) && (currentTime.Sub(time).Seconds() > 0) {
-			entity.DPS10s = (pastHP - entity.HP) / currentTime.Sub(time).Seconds()
-		}
-		if (currentTime.Sub(time).Seconds() < 60) && (currentTime.Sub(time).Seconds() > 0) {
-			entity.DPS60s = (pastHP - entity.HP) / currentTime.Sub(time).Seconds()
-		}
-		if (entity.LastCombatTime.Sub(time).Seconds() != 0) {
-			entity.DPSOnThatEnemy = (pastHP - entity.HP) / entity.LastCombatTime.Sub(time).Seconds()
-		}
-		entity.HP = pastHP
-		entity.LastCombatTime = time
-	}
+   a.updateUI()
+}
 
-	// Update UI
-	a.updateUI()
+func (a *App) modifyEntity(entityID string, entityName string, pastHP float64, currentTime time.Time, logTimestamp time.Time) {
+    if _, exists := a.entities[entityID]; !exists {
+        a.entities[entityID] = &Entity{
+          HP:             pastHP,
+          Name:           entityName,
+          LastCombatTime: logTimestamp,
+        }
+      }
+
+      entity := a.entities[entityID]
+      if (currentTime.Sub(logTimestamp).Seconds() < 10) && (currentTime.Sub(logTimestamp).Seconds() > 0) {
+        entity.DPS10s = (pastHP - entity.HP) / currentTime.Sub(logTimestamp).Seconds()
+      }
+      if (currentTime.Sub(logTimestamp).Seconds() < 60) && (currentTime.Sub(logTimestamp).Seconds() > 0) {
+        entity.DPS60s = (pastHP - entity.HP) / currentTime.Sub(logTimestamp).Seconds()
+      }
+      if (entity.LastCombatTime.Sub(logTimestamp).Seconds() != 0) {
+        entity.DPSOnThatEnemy = (pastHP - entity.HP) / entity.LastCombatTime.Sub(logTimestamp).Seconds()
+      }
+      entity.HP = pastHP
+      entity.LastCombatTime = logTimestamp
 }
 
 func parseTimestamp(line string) (time.Time, error) {
@@ -136,8 +168,9 @@ func parseTimestamp(line string) (time.Time, error) {
 func (a *App) updateUI() {
 	// This function should send the updated DPS values to the frontend for display
 	// Use Wails binding to call a frontend method
-	runtime.EventsEmit(a.ctx, "rcv:entities", a.entities)
 
+	runtime.EventsEmit(a.ctx, "rcv:entities", a.entities)
+	runtime.EventsEmit(a.ctx, "rcv:logLines", a.GetLogLineCount())
 }
 
 // domReady is called after front-end resources have been loaded
