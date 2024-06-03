@@ -3,24 +3,22 @@ import { EventsOn } from '@wailsjs/runtime/runtime';
 import { Button } from './button';
 import { isEmpty } from '@/lib/utils';
 
-window.startDpsTracker = () => {
-  // noinspection JSIgnoredPromiseFromCall
-  window.go.main.App.StartDpsTracker();
-}
-
-
 const DpsChart = () => {
   // const [entities, setEntities] = useState({});
+  const [logParsing, setLogParsing] = useState<boolean>(false);
   const [logs, setLogs] = useState<string[]>([]);
   const [logLines, setLogLines] = useState<number>(0);
 
   useEffect(() => {
     EventsOn("rcv:entities", (entities: any) => {
-      if (!isEmpty(entities))
-      setLogs(entities);
+      if (!isEmpty(entities)) {
+        setLogs(entities);
+        console.log(entities)
+      }
     })
 
     EventsOn("rcv:logLines", (logLines: number) => {
+      console.log(logLines)
       setLogLines(logLines);
     })
 
@@ -30,15 +28,20 @@ const DpsChart = () => {
     };
   }, []);
 
+  const startDpsTracker = () => {
+    window.go.main.App.StartDpsTracker();
+    setLogParsing(true);
+  }
+
   return (
     <div className="App">
       <header className="App-header flex flex-col justify-center items-center">
         <h1>DPS Calculator</h1>
         <div className="space-x-3">
-          <Button onClick={window.startDpsTracker}>Start Tracking</Button>
-          <Button onClick={window.startDpsTracker}>Stop Tracking</Button>
+          <Button onClick={startDpsTracker}>Start Tracking</Button>
         </div>
         <div id="dpsContainer">
+          { logParsing ? 'Log is parsing' : 'Log is not being parsed'}
           {logLines}
           {
             logs.length > 0 && logs.map((log) => <div key={log}>{log}</div>)

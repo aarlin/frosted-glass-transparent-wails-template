@@ -107,9 +107,9 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 	// Regex patterns
     a.LogLine()
 
-	reLifeValue := regexp.MustCompile(`LifeValue: (\d+)`)
+	reAliveValue := regexp.MustCompile(`LifeValue: (\d+)`)
 	reDeadValue := regexp.MustCompile(`CharacterAiComponent\.SetEnable`)
-	reStartCombatEntityID := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Monster:BP_([^_]*)`)
+	reCombatEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Monster:BP_([^_]*)`)
 
 
 	// Parse timestamp
@@ -119,18 +119,18 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 	}
 
 	// Extract and process LifeValue
-    if reLifeValue.MatchString(line) || reDeadValue.MatchString(line) {
+    if reAliveValue.MatchString(line) || reDeadValue.MatchString(line) {
         log.Println(line)
         var pastHP float64
-        if reLifeValue.MatchString(line) {
-            lifeValueStr := reLifeValue.FindStringSubmatch(line)[1]
+        if reAliveValue.MatchString(line) {
+            lifeValueStr := reAliveValue.FindStringSubmatch(line)[1]
             pastHP, _ = strconv.ParseFloat(lifeValueStr, 64)
         } else {
             pastHP = 0
         }
 
-        entityID := reStartCombatEntityID.FindStringSubmatch(line)[1]
-        entityName := reStartCombatEntityID.FindStringSubmatch(line)[2]
+        entityID := reCombatEntity.FindStringSubmatch(line)[1]
+        entityName := reCombatEntity.FindStringSubmatch(line)[2]
 
         a.modifyEntity(entityID, entityName, pastHP, currentTime, logTimestamp)
     }
@@ -141,24 +141,24 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 func (a *App) modifyEntity(entityID string, entityName string, pastHP float64, currentTime time.Time, logTimestamp time.Time) {
     if _, exists := a.entities[entityID]; !exists {
         a.entities[entityID] = &Entity{
-          HP:             pastHP,
-          Name:           entityName,
-          LastCombatTime: logTimestamp,
+            HP:             pastHP,
+            Name:           entityName,
+            LastCombatTime: logTimestamp,
         }
-      }
+    }
 
-      entity := a.entities[entityID]
-      if (currentTime.Sub(logTimestamp).Seconds() < 10) && (currentTime.Sub(logTimestamp).Seconds() > 0) {
+    entity := a.entities[entityID]
+    if (currentTime.Sub(logTimestamp).Seconds() < 10) && (currentTime.Sub(logTimestamp).Seconds() > 0) {
         entity.DPS10s = (pastHP - entity.HP) / currentTime.Sub(logTimestamp).Seconds()
-      }
-      if (currentTime.Sub(logTimestamp).Seconds() < 60) && (currentTime.Sub(logTimestamp).Seconds() > 0) {
+    }
+    if (currentTime.Sub(logTimestamp).Seconds() < 60) && (currentTime.Sub(logTimestamp).Seconds() > 0) {
         entity.DPS60s = (pastHP - entity.HP) / currentTime.Sub(logTimestamp).Seconds()
-      }
-      if (entity.LastCombatTime.Sub(logTimestamp).Seconds() != 0) {
+    }
+    if (entity.LastCombatTime.Sub(logTimestamp).Seconds() != 0) {
         entity.DPSOnThatEnemy = (pastHP - entity.HP) / entity.LastCombatTime.Sub(logTimestamp).Seconds()
-      }
-      entity.HP = pastHP
-      entity.LastCombatTime = logTimestamp
+    }
+    entity.HP = pastHP
+    entity.LastCombatTime = logTimestamp
 }
 
 func parseTimestamp(line string) (time.Time, error) {

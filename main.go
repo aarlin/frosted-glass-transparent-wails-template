@@ -55,7 +55,7 @@ func main() {
 		// Windows platform specific options
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
+			WindowIsTranslucent:  true,
 			DisableWindowIcon:    false,
 			// DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath: "",
