@@ -109,7 +109,8 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 
 	reAliveValue := regexp.MustCompile(`LifeValue: (\d+)`)
 	reDeadValue := regexp.MustCompile(`CharacterAiComponent\.SetEnable`)
-	reCombatEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Monster:BP_([^_]*)`)
+	reCombatStartEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Monster:BP_([^_]*)`)
+	reCombatEndEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Vision:BP_([^_]*)`)
 
 
 	// Parse timestamp
@@ -121,16 +122,25 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 	// Extract and process LifeValue
     if reAliveValue.MatchString(line) || reDeadValue.MatchString(line) {
         log.Println(line)
+        var entityID string
+        var entityName string
         var pastHP float64
         if reAliveValue.MatchString(line) {
+            log.Println("Start combat with monster")
             lifeValueStr := reAliveValue.FindStringSubmatch(line)[1]
             pastHP, _ = strconv.ParseFloat(lifeValueStr, 64)
+            entityID := reCombatStartEntity.FindStringSubmatch(line)[1]
+            log.Println(entityID)
+            entityName := reCombatStartEntity.FindStringSubmatch(line)[2]
+            log.Println(entityName)
         } else {
             pastHP = 0
+            entityID := reCombatEndEntity.FindStringSubmatch(line)[1]
+            log.Println(entityID)
+            entityName := reCombatEndEntity.FindStringSubmatch(line)[2]
+            log.Println(entityName)
         }
 
-        entityID := reCombatEntity.FindStringSubmatch(line)[1]
-        entityName := reCombatEntity.FindStringSubmatch(line)[2]
 
         a.modifyEntity(entityID, entityName, pastHP, currentTime, logTimestamp)
     }
