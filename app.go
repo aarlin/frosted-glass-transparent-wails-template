@@ -109,8 +109,21 @@ func (a *App) parseLine(line string, currentTime time.Time) {
 
 	reAliveValue := regexp.MustCompile(`LifeValue: (\d+)`)
 	reDeadValue := regexp.MustCompile(`CharacterAiComponent\.SetEnable`)
+
+    // Overworld Monsters
+
+    // [2024.06.02-23.13.05:681][939][GameThread]Puerts: Display: (0x000000005002B830) [451039][I][CombatInfo][WCL][209883][23.13.5:681] [Part][EntityId:81980:Monster:BP_MO1DundishuMd00601_C_2146841417] UpdatePartInfo [TagName: 怪物.common.弱点][Activated: true][LifeValue: 3757]
 	reCombatStartEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Monster:BP_([^_]*)`)
-	reCombatEndEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Vision:BP_([^_]*)`)
+
+    //[2024.06.02-23.14.25:367][705][GameThread]Puerts: Display: (0x000000005002B830) [457911][I][CombatInfo][WCL][214649][23.14.25:367] [Ai][EntityId:81980:Monster:BP_MO1DundishuMd00601_C_2146841417] CharacterAiComponent.SetEnable [enabled: false]
+    reCombatEndEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Vision:BP_([^_]*)`)
+
+    // Bosses
+
+    // [2024.06.03-00.35.47:126][475][GameThread]Puerts: Display: (0x0000000050545070) [6372][I][CombatInfo][WCL][1412][0.35.47:125] [Ai][EntityId:16:Vision:BP_Vision_MB1Zhenwuguanzhe_C_2147468331] AiController.InitBaseInfo [enabled: false]
+
+    // [2024.06.03-00.37.49:847][634][GameThread]Puerts: Display: (0x0000000050545070) [15398][I][CombatInfo][WCL][8571][0.37.49:847] [Ai][EntityId:7042:Vision:BP_Vision_MB1Zhenwuguanzhe_C_2147439006] CharacterAiComponent.SetEnable [enabled: false]
+    reCombatEndBossEntity := regexp.MustCompile(`\[CombatInfo\].*\[EntityId:(\d+):Vision:BP_([^_]*)`)
 
 
 	// Parse timestamp
