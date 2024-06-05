@@ -45,13 +45,13 @@ To build a redistributable, production mode package, use `wails build`.
 
 ## Reverse Engineering Process
 
-1. Opened `C:\Program Files\Epic Games\WutheringWavesj3oFh\Wuthering Waves Game\Client\Content\Paks` using [Fmodel](https://fmodel.app/download)
+1. Open `C:\Program Files\Epic Games\WutheringWavesj3oFh\Wuthering Waves Game\Client\Content\Paks` using [Fmodel](https://fmodel.app/download)
 
 2. Under Directory > AES, add AES key: `0xE0D4C0AA387A268B29C397E3C0CAD934522EFC96BE5526D6288EA26351CDACC9`
 
-3. Loaded `pakchunk11-WindowsNoEditor.pak` in Archives menu
+3. Load `pakchunk11-WindowsNoEditor.pak` in Archives menu
 
-4. Under Folders menu, right-click Client and click `Export Folder's Packages Raw Data (.uasset)`
+4. Under Folders menu, right-click Client folder and choose `Export Folder's Packages Raw Data (.uasset)`
 
 5. Change directory to exported folder
 
@@ -91,6 +91,22 @@ To build a redistributable, production mode package, use `wails build`.
     ./Game/NewWorld/Character/Monster/Entity/Component/MonsterBehaviorComponent.js
     ./Game/Utils/CombatDebugController.js
     ```
+
+    Relevant files
+
+    ```bash
+    ./Core/Define/Net/Protocol.js
+    ./Game/AI/Controller/AiController.js
+    ./Content/Aki/JavaScript/Game/Module/CombatMessage/CombatMessageController.js
+    ./Content/Aki/JavaScript/Game/Module/CombatMessage/CombatMessageModel.js
+    ./Game/Module/CombatMessage/CombatMessageController.js
+    ./Game/NewWorld/Character/Common/Component/Abilities/CharacterGasDebugComponent.js
+    ./Game/NewWorld/Character/Common/Component/Abilities/CharacterDamageComponent.js
+    ./Game/NewWorld/Character/Common/Component/Abilities/CharacterDamageCalculations.js
+    ./Game/NewWorld/Character/Common/Component/CharacterPartComponent.js
+    ./Content/Aki/JavaScript/Game/Utils/CombatDebugController.js
+    ```
+
 7. Beautify files using VSCode Extension: `HookyQR.beautify`
 
 8. Find and modify files to include extra logging
