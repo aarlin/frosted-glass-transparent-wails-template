@@ -19,6 +19,13 @@ cd frontend
 npm install
 ```
 
+### Configuration
+
+Change app.go line 58 for frosted glass and transparent appearance:
+
+Frosted Glass -> `WindowIsTranslucent: true`  
+Transparent   -> `WindowIsTranslucent: false` 
+
 ## Live Development
 
 To run in live development mode, run `wails dev` in the project directory. In another terminal, go into the `frontend`
