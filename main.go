@@ -24,42 +24,42 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "wuthering-waves-dps-meter",
+		Title:             "frosted-glass-transparent-wails-template",
 		Width:             600,
 		Height:            400,
 		MinWidth:          600,
 		MinHeight:         400,
 		MaxWidth:          600,
 		MaxHeight:         400,
-        AlwaysOnTop:       true,
+		AlwaysOnTop:       true,
 		DisableResize:     true,
 		Fullscreen:        false,
 		Frameless:         false,
 		StartHidden:       false,
 		HideWindowOnClose: false,
 		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 0},
-		AssetServer:       &assetserver.Options{
+		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		Menu:              nil,
-		Logger:            nil,
-		LogLevel:          logger.DEBUG,
-		OnStartup:         app.startup,
-		OnDomReady:        app.domReady,
-		OnBeforeClose:     app.beforeClose,
-		OnShutdown:        app.shutdown,
-		WindowStartState:  options.Normal,
+		Menu:             nil,
+		Logger:           nil,
+		LogLevel:         logger.DEBUG,
+		OnStartup:        app.startup,
+		OnDomReady:       app.domReady,
+		OnBeforeClose:    app.beforeClose,
+		OnShutdown:       app.shutdown,
+		WindowStartState: options.Normal,
 		Bind: []interface{}{
 			app,
 		},
 		// Windows platform specific options
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
-			WindowIsTranslucent:  true,
+			WindowIsTranslucent:  false, // Change this to swap between frosted glass & see through
 			DisableWindowIcon:    false,
 			// DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath: "",
-			ZoomFactor: 1.0,
+			ZoomFactor:          1.0,
 		},
 		// Mac platform specific options
 		Mac: &mac.Options{
@@ -75,7 +75,7 @@ func main() {
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
-				Title:   "wuthering-waves-dps-meter",
+				Title:   "frosted-glass-transparent-wails-template",
 				Message: "",
 				Icon:    icon,
 			},

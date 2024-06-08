@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Wails: Debug wuthering-waves-dps-meter",
+      "name": "Wails: Debug frosted-glass-transparent-wails-template",
       "type": "go",
       "request": "launch",
       "mode": "exec",
-      "program": "${workspaceFolder}/build/bin/wuthering-waves-dps-meter.exe",
+      "program": "${workspaceFolder}/build/bin/frosted-glass-transparent-wails-template.exe",
       "preLaunchTask": "build",
       "cwd": "${workspaceFolder}",
       "env": {}

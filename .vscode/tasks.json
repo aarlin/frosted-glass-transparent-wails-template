@@ -43,7 +43,7 @@
         "-gcflags",
         "all=-N -l",
         "-o",
-        "build/bin/wuthering-waves-dps-meter.exe"
+        "build/bin/frosted-glass-transparent-wails-template.exe"
       ],
       "dependsOn": ["npm install", "npm run build"]
     }

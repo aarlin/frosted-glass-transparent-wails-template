@@ -1,4 +1,4 @@
-module wuthering-waves-dps-meter
+module frosted-glass-transparent-wails-template
 
 go 1.22
 
